@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FilmController {
-    private FilmService filmService;
+    private final FilmService filmService;
+
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping("/films")
     public String getCount(@RequestParam String character) {
