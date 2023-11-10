@@ -27,6 +27,6 @@ class FilmControllerTest {
         String character = "Luke Skywalker";
         filmController.getCount(character);
 
-        verify(filmService).getFilmCount(character);
+        verify(filmService).getCount(character);
     }
 }

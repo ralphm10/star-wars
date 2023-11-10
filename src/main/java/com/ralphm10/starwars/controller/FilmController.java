@@ -15,7 +15,7 @@ public class FilmController {
 
     @GetMapping("/films")
     public String getCount(@RequestParam String character) {
-        int count = filmService.getFilmCount(character);
+        int count = filmService.getCount(character);
         return character + " appeared in " + count + " films";
     }
 }
