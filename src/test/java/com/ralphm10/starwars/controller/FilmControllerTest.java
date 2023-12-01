@@ -4,7 +4,6 @@ import com.ralphm10.starwars.service.FilmService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.Mockito.verify;
@@ -27,6 +26,6 @@ class FilmControllerTest {
         String character = "Luke Skywalker";
         filmController.getCount(character);
 
-        verify(filmService).getCount(character);
+        verify(filmService).getCountWithWebClient(character);
     }
 }

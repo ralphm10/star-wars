@@ -18,15 +18,18 @@ public class FilmService {
         this.webClientService = webClientService;
     }
 
-    public int getCount(String character) {
-        return getPeople().stream()
+    public int getCountWithWebClient(String character) {
+        return getPeopleWithWebClient().stream()
                 .filter(person -> person.getName().equalsIgnoreCase(character))
                 .findFirst()
                 .map(person -> person.getFilms().size())
                 .orElse(0);
     }
 
-    public List<Person> getPeople() {
+    // try with http client https://www.baeldung.com/spring-6-http-interface
+    // try with retrofit https://square.github.io/retrofit/
+
+    public List<Person> getPeopleWithWebClient() {
         String url = "https://challenges.hackajob.co/swapi/api/people/";
         List<Person> people = new ArrayList<>();
 

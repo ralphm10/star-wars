@@ -13,9 +13,9 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping("/films")
+    @GetMapping("/films-webclient")
     public String getCount(@RequestParam String character) {
-        int count = filmService.getCount(character);
+        int count = filmService.getCountWithWebClient(character);
         return character + " appeared in " + count + " films";
     }
 }

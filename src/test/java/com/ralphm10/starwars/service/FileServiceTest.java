@@ -31,7 +31,7 @@ class FileServiceTest {
         when(response.getBody()).thenReturn(mock(PersonResponse.class));
         when(webClientService.makeGetRequest(any())).thenReturn(response);
 
-        filmService.getCount(character);
+        filmService.getCountWithWebClient(character);
 
         verify(webClientService).makeGetRequest(any());
 
