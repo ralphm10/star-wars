@@ -1,6 +1,8 @@
 package com.ralphm10.starwars.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ralphm10.starwars.models.entity.Person;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,12 +25,14 @@ public class FilmService {
     private final WebClientService webClientService;
     private final HttpClientService httpClientService;
     private final ObjectMapper objectMapper;
+    private final Gson gson;
 
 
     public FilmService(WebClientService webClientService, HttpClientService httpClientService) {
         this.webClientService = webClientService;
         this.httpClientService = httpClientService;
         this.objectMapper = new ObjectMapper();
+        gson = new Gson();
     }
 
     public int getCountWithWebClient(String character) {
@@ -40,7 +44,7 @@ public class FilmService {
     }
 
     public int getCountWithHttpClient(String character) throws URISyntaxException, IOException, InterruptedException {
-        return getPeopleWithHttpClient().stream()
+        return getPeopleWithHttpClientGson().stream()
                 .filter(person -> person.getName().equalsIgnoreCase(character))
                 .findFirst()
                 .map(person -> person.getFilms().size())
@@ -69,6 +73,22 @@ public class FilmService {
         while (url != null) {
             HttpResponse<String> response = httpClientService.makeGetRequest(url);
             PersonResponse responseBody = objectMapper.readValue(response.body(), PersonResponse.class);
+            if (Objects.nonNull(responseBody)) {
+                people.addAll(responseBody.getPeople());
+                url = responseBody.getNextPage();
+            }
+        }
+
+        return people;
+    }
+
+    public List<Person> getPeopleWithHttpClientGson() throws URISyntaxException, IOException, InterruptedException {
+        String url = "https://challenges.hackajob.co/swapi/api/people/";
+        List<Person> people = new ArrayList<>();
+
+        while (url != null) {
+            HttpResponse<String> response = httpClientService.makeGetRequest(url);
+            PersonResponse responseBody = gson.fromJson(response.body(), new TypeToken<PersonResponse>(){}.getType());
             if (Objects.nonNull(responseBody)) {
                 people.addAll(responseBody.getPeople());
                 url = responseBody.getNextPage();
