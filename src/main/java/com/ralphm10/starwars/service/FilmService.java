@@ -1,5 +1,6 @@
 package com.ralphm10.starwars.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ralphm10.starwars.models.entity.Person;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,17 +10,23 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 
 @Service
 public class FilmService {
 
     private final WebClientService webClientService;
+    private final HttpClientService httpClientService;
 
-    public FilmService(WebClientService webClientService) {
+
+    public FilmService(WebClientService webClientService, HttpClientService httpClientService) {
         this.webClientService = webClientService;
+        this.httpClientService = httpClientService;
     }
 
     public int getCountWithWebClient(String character) {
@@ -30,8 +37,13 @@ public class FilmService {
                 .orElse(0);
     }
 
-    // try with http client https://www.baeldung.com/spring-6-http-interface
-    // try with retrofit https://square.github.io/retrofit/
+    public int getCountWithHttpClient(String character) throws URISyntaxException, IOException, InterruptedException {
+        return getPeopleWithHttpClient().stream()
+                .filter(person -> person.getName().equalsIgnoreCase(character))
+                .findFirst()
+                .map(person -> person.getFilms().size())
+                .orElse(0);
+    }
 
     public List<Person> getPeopleWithWebClient() {
         String url = "https://challenges.hackajob.co/swapi/api/people/";
@@ -40,6 +52,23 @@ public class FilmService {
         while (url != null) {
             ResponseEntity<PersonResponse> response = webClientService.makeGetRequest(url);
             PersonResponse responseBody = response.getBody();
+            if (Objects.nonNull(responseBody)) {
+                people.addAll(responseBody.getPeople());
+                url = responseBody.getNextPage();
+            }
+        }
+        return people;
+    }
+
+    public List<Person> getPeopleWithHttpClient() throws URISyntaxException, IOException, InterruptedException {
+        String url = "https://challenges.hackajob.co/swapi/api/people/";
+        List<Person> people = new ArrayList<>();
+
+        var objectMapper = new ObjectMapper();
+
+        while (url != null) {
+            HttpResponse<String> response = httpClientService.makeGetRequest(url);
+            PersonResponse responseBody = objectMapper.readValue(response.body(), PersonResponse.class);
             if (Objects.nonNull(responseBody)) {
                 people.addAll(responseBody.getPeople());
                 url = responseBody.getNextPage();
@@ -69,3 +98,4 @@ public class FilmService {
         // this returns first page only
     }
 }
+

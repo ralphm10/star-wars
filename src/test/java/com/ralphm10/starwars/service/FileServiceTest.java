@@ -17,16 +17,18 @@ class FileServiceTest {
 
     @Mock
     private WebClientService webClientService;
+    @Mock
+    private HttpClientService httpClientService;
 
     @BeforeEach
     void setUp() {
-        filmService = new FilmService(webClientService);
+        filmService = new FilmService(webClientService, httpClientService);
     }
 
     @Test
     void getCountCallsWebClient() {
         String character = "Luke Skywalker";
-        filmService = new FilmService(webClientService);
+        filmService = new FilmService(webClientService, httpClientService);
         ResponseEntity<PersonResponse> response = mock(ResponseEntity.class);
         when(response.getBody()).thenReturn(mock(PersonResponse.class));
         when(webClientService.makeGetRequest(any())).thenReturn(response);
@@ -34,6 +36,5 @@ class FileServiceTest {
         filmService.getCountWithWebClient(character);
 
         verify(webClientService).makeGetRequest(any());
-
     }
 }

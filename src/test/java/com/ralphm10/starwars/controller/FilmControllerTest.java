@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
@@ -24,7 +26,7 @@ class FilmControllerTest {
     @Test
     void returnsFilmCount() {
         String character = "Luke Skywalker";
-        filmController.getCount(character);
+        filmController.getCountWebClient(character);
 
         verify(filmService).getCountWithWebClient(character);
     }

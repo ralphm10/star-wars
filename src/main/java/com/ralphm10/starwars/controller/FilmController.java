@@ -1,13 +1,12 @@
 package com.ralphm10.starwars.controller;
 
-import com.ralphm10.starwars.models.entity.Person;
 import com.ralphm10.starwars.service.FilmService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.List;
+import java.net.URISyntaxException;
 
 @RestController
 public class FilmController {
@@ -23,9 +22,9 @@ public class FilmController {
         return character + " appeared in " + count + " films";
     }
 
-    @GetMapping("/films-retrofit")
-    public List<Person> getCountRetrofit() throws IOException {
-
-        return filmService.getPeopleWithRetrofit();
+    @GetMapping("/films-http")
+    public String getCountHttpClient(@RequestParam String character) throws URISyntaxException, IOException, InterruptedException {
+        int count = filmService.getCountWithHttpClient(character);
+        return character + " appeared in " + count + " films";
     }
 }
