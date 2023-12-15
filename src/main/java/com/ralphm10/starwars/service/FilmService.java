@@ -22,11 +22,13 @@ public class FilmService {
 
     private final WebClientService webClientService;
     private final HttpClientService httpClientService;
+    private final ObjectMapper objectMapper;
 
 
     public FilmService(WebClientService webClientService, HttpClientService httpClientService) {
         this.webClientService = webClientService;
         this.httpClientService = httpClientService;
+        this.objectMapper = new ObjectMapper();
     }
 
     public int getCountWithWebClient(String character) {
@@ -63,8 +65,6 @@ public class FilmService {
     public List<Person> getPeopleWithHttpClient() throws URISyntaxException, IOException, InterruptedException {
         String url = "https://challenges.hackajob.co/swapi/api/people/";
         List<Person> people = new ArrayList<>();
-
-        var objectMapper = new ObjectMapper();
 
         while (url != null) {
             HttpResponse<String> response = httpClientService.makeGetRequest(url);
