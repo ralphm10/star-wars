@@ -3,8 +3,12 @@ package com.ralphm10.starwars.service;
 import com.ralphm10.starwars.models.entity.Person;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,5 +47,25 @@ public class FilmService {
         }
 
         return people;
+    }
+
+    public List<Person> getPeopleWithRetrofit() throws IOException {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://challenges.hackajob.co/swapi/api/")
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build();
+
+        RetroFitService service = retrofit.create(RetroFitService.class);
+
+
+        Call<PersonResponse> call = service.getPeople();
+        Response<PersonResponse> response = call.execute();
+
+        if (response.isSuccessful()) {
+            return response.body().getPeople();
+        } else {
+            throw new IOException(response.errorBody() != null ? response.errorBody().string() : "Unknown error");
+        }
+        // this returns first page only
     }
 }
